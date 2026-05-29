@@ -1,0 +1,126 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2024-05-28T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2024",
+  "resources": [
+    {
+      "_id": "req_auth_login",
+      "parentId": "fld_auth",
+      "_type": "request",
+      "name": "Login",
+      "url": "http://localhost:3000/api/auth/login",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"admin@dropcp.com\",\n  \"password\": \"admin123\"\n}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ]
+    },
+    {
+      "_id": "req_auth_me",
+      "parentId": "fld_auth",
+      "_type": "request",
+      "name": "Me",
+      "url": "http://localhost:3000/api/auth/me",
+      "method": "GET",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ]
+    },
+    {
+      "_id": "req_users_list",
+      "parentId": "fld_users",
+      "_type": "request",
+      "name": "Listar Usuarios",
+      "url": "http://localhost:3000/api/users",
+      "method": "GET",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ]
+    },
+    {
+      "_id": "req_users_create",
+      "parentId": "fld_users",
+      "_type": "request",
+      "name": "Criar Usuario",
+      "url": "http://localhost:3000/api/users",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Membro Teste\",\n  \"email\": \"membro@dropcp.com\",\n  \"password\": \"senha123\",\n  \"role\": \"MEMBER\"\n}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ]
+    },
+    {
+      "_id": "req_items_list",
+      "parentId": "fld_items",
+      "_type": "request",
+      "name": "Listar Itens",
+      "url": "http://localhost:3000/api/items",
+      "method": "GET",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ]
+    },
+    {
+      "_id": "req_items_create",
+      "parentId": "fld_items",
+      "_type": "request",
+      "name": "Criar Item",
+      "url": "http://localhost:3000/api/items",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Dark Crystal Armor\",\n  \"grade\": \"A\"\n}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ]
+    },
+    {
+      "_id": "req_drops_list",
+      "parentId": "fld_drops",
+      "_type": "request",
+      "name": "Listar Drops",
+      "url": "http://localhost:3000/api/drops",
+      "method": "GET",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ]
+    },
+    {
+      "_id": "req_drops_create",
+      "parentId": "fld_drops",
+      "_type": "request",
+      "name": "Criar Drop",
+      "url": "http://localhost:3000/api/drops",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Farm de RB Valakas\",\n  \"type\": \"BOSS\",\n  \"dropDate\": \"2024-05-20\",\n  \"notes\": \"Drop epico no Valakas\",\n  \"items\": [\n    {\n      \"itemId\": \"<CUID_DO_ITEM>\",\n      \"quantity\": \"2\",\n      \"unitValue\": \"500k\"\n    },\n    {\n      \"itemName\": \"Adena\",\n      \"quantity\": \"1\",\n      \"unitValue\": \"10kk\"\n    }\n  ],\n  \"participants\": [\n    { \"userId\": \"<CUID_DO_USUARIO_1>\" },\n    { \"userId\": \"<CUID_DO_USUARIO_2>\" }\n  ]\n}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ]
+    },
+    {
+      "_id": "req_dashboard_overview",
+      "parentId": "fld_dashboard",
+      "_type": "request",
+      "name": "Dashboard Overview",
+      "url": "http://localhost:3000/api/dashboard/overview",
+      "method": "GET",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ]
+    }
+  ]
+}

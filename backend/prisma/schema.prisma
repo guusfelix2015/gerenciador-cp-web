@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MEMBER
+}
+
+enum ItemGrade {
+  D
+  C
+  B
+  A
+  S
+  COMMON
+}
+
+enum DropType {
+  FARM
+  BOSS
+  PRIME
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users User[]
+  items Item[]
+  drops Drop[]
+
+  @@map("workspaces")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  role          UserRole  @default(MEMBER)
+  workspaceId   String?   @map("workspace_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  workspace     Workspace?        @relation(fields: [workspaceId], references: [id])
+  createdDrops  Drop[]            @relation("DropCreatedBy")
+  participations DropParticipant[]
+  paidDropParticipants DropParticipant[] @relation("PaidByUser")
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  name        String
+  grade       ItemGrade
+  workspaceId String?  @map("workspace_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+  dropItems   DropItem[]
+
+  @@map("items")
+}
+
+model Drop {
+  id          String   @id @default(cuid())
+  title       String
+  type        DropType
+  dropDate    DateTime @map("drop_date")
+  totalValue  Int      @default(0) @map("total_value")
+  notes       String?
+  createdById String   @map("created_by_id")
+  workspaceId String?  @map("workspace_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  createdBy   User              @relation("DropCreatedBy", fields: [createdById], references: [id])
+  workspace   Workspace?        @relation(fields: [workspaceId], references: [id])
+  items       DropItem[]
+  participants DropParticipant[]
+
+  @@map("drops")
+}
+
+model DropItem {
+  id         String @id @default(cuid())
+  dropId     String @map("drop_id")
+  itemId     String? @map("item_id")
+  itemName   String @map("item_name")
+  quantity   Int
+  unitValue  Int    @map("unit_value")
+  totalValue Int    @map("total_value")
+
+  drop       Drop   @relation(fields: [dropId], references: [id], onDelete: Cascade)
+  item       Item?  @relation(fields: [itemId], references: [id])
+
+  @@map("drop_items")
+}
+
+model DropParticipant {
+  id              String         @id @default(cuid())
+  dropId          String         @map("drop_id")
+  userId          String         @map("user_id")
+  paymentStatus   PaymentStatus  @default(PENDING) @map("payment_status")
+  paidAt          DateTime?      @map("paid_at")
+  paidById        String?        @map("paid_by_id")
+
+  drop   Drop   @relation(fields: [dropId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+  paidBy User?  @relation(fields: [paidById], references: [id], name: "PaidByUser")
+
+  @@unique([dropId, userId])
+  @@map("drop_participants")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String   @map("entity_id")
+  userId    String   @map("user_id")
+  changes   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

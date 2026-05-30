@@ -11,6 +11,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { formatAdenaPreview } from "@/lib/adena";
 import { Loader2, Plus, Trash2, Boxes, Search, ChevronLeft, ChevronRight, Pencil, FileDown } from "lucide-react";
 
 export function DropsPage() {
@@ -47,11 +48,7 @@ export function DropsPage() {
     },
   });
 
-  const formatAdena = (v: number) => {
-    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}kk`;
-    if (v >= 1_000) return `${(v / 1_000).toFixed(0)}k`;
-    return String(v);
-  };
+  const formatAdena = formatAdenaPreview;
 
   const clearFilters = () => {
     setFilterTitle("");

@@ -8,13 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ArrowLeft, Boxes, Users, Calendar, Tag, FileText, Crown, Coins, CheckCircle, XCircle, Wallet } from "lucide-react";
+import { Loader2, ArrowLeft, Boxes, Users, Calendar, FileText, Crown, Coins, CheckCircle, XCircle, Wallet } from "lucide-react";
 
-function formatAdena(value: number) {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}kk`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(0)}k`;
-  return String(value);
-}
+import { formatAdenaPreview } from "@/lib/adena";
 
 export function DropDetailPage() {
   const navigate = useNavigate();
@@ -121,7 +117,7 @@ export function DropDetailPage() {
             <Coins className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-primary">{formatAdena(drop.totalValue)}</div>
+            <div className="text-xl font-bold text-primary">{formatAdenaPreview(drop.totalValue)}</div>
           </CardContent>
         </Card>
 
@@ -131,7 +127,7 @@ export function DropDetailPage() {
             <Crown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-green-600">{formatAdena(splitPerPlayer)}</div>
+            <div className="text-xl font-bold text-green-600">{formatAdenaPreview(splitPerPlayer)}</div>
             <p className="text-xs text-muted-foreground">{drop.participants.length} participantes</p>
           </CardContent>
         </Card>
@@ -176,8 +172,8 @@ export function DropDetailPage() {
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.itemName}</TableCell>
                   <TableCell className="text-right">{item.quantity}</TableCell>
-                  <TableCell className="text-right">{formatAdena(item.unitValue)}</TableCell>
-                  <TableCell className="text-right font-medium">{formatAdena(item.totalValue)}</TableCell>
+                  <TableCell className="text-right">{formatAdenaPreview(item.unitValue)}</TableCell>
+                  <TableCell className="text-right font-medium">{formatAdenaPreview(item.totalValue)}</TableCell>
                 </TableRow>
               ))}
               <TableRow className="border-t-2">
@@ -185,7 +181,7 @@ export function DropDetailPage() {
                   Total
                 </TableCell>
                 <TableCell className="text-right font-bold text-primary">
-                  {formatAdena(drop.totalValue)}
+                  {formatAdenaPreview(drop.totalValue)}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -214,7 +210,7 @@ export function DropDetailPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{p.user.name}</p>
-                  <p className="text-xs text-muted-foreground">{formatAdena(splitPerPlayer)}</p>
+                  <p className="text-xs text-muted-foreground">{formatAdenaPreview(splitPerPlayer)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {p.paymentStatus === "PAID" ? (

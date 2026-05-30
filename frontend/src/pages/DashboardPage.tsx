@@ -13,11 +13,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Select } from "@/components/ui/select";
 import { Loader2, TrendingUp, Boxes, CalendarDays, Package, Crown, BarChart3, FileDown } from "lucide-react";
 
-function formatAdena(value: number) {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}kk`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(0)}k`;
-  return String(value);
-}
+import { formatAdenaPreview } from "@/lib/adena";
 
 export function DashboardPage() {
   const [startDate, setStartDate] = useState("");
@@ -125,7 +121,7 @@ export function DashboardPage() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatAdena(data?.totalValue ?? 0)}</div>
+            <div className="text-2xl font-bold">{formatAdenaPreview(data?.totalValue ?? 0)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -149,7 +145,7 @@ export function DashboardPage() {
                 : "-"}
             </div>
             <p className="text-xs text-muted-foreground">
-              {data?.dayWithHighestValue ? formatAdena(data.dayWithHighestValue.value) : ""}
+              {data?.dayWithHighestValue ? formatAdenaPreview(data.dayWithHighestValue.value) : ""}
             </p>
           </CardContent>
         </Card>
@@ -190,7 +186,7 @@ export function DashboardPage() {
                     <TableRow key={idx}>
                       <TableCell className="font-medium">{item.itemName}</TableCell>
                       <TableCell className="text-right">{item.totalQuantity}</TableCell>
-                      <TableCell className="text-right">{formatAdena(item.totalValue)}</TableCell>
+                      <TableCell className="text-right">{formatAdenaPreview(item.totalValue)}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -274,7 +270,7 @@ export function DashboardPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">{day.count}</TableCell>
-                        <TableCell className="text-right">{formatAdena(value)}</TableCell>
+                        <TableCell className="text-right">{formatAdenaPreview(value)}</TableCell>
                       </TableRow>
                     );
                   })

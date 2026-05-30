@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
+import { parseAdena, formatAdenaPreview } from "@/lib/adena";
 import type { Item, User, Drop } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Plus, Trash2, ArrowLeft } from "lucide-react";
 
 const dropTypes = ["FARM", "BOSS", "PRIME"] as const;
+
+function getAdenaMeta(raw: string) {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return { preview: "", error: "", parsed: 0 };
+  }
+  const parsed = parseAdena(trimmed);
+  if (parsed < 0) {
+    return {
+      preview: "",
+      error: "Formato inválido. Use números ou sufixos k, kk, b.",
+      parsed: -1,
+    };
+  }
+  return {
+    preview: `Valor equivalente: ${formatAdenaPreview(parsed)} Adenas`,
+    error: "",
+    parsed,
+  };
+}
 
 interface DropFormItem {
   itemId?: string;
@@ -146,6 +167,13 @@ export function DropFormPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const invalidItem = formItems.find((it) => getAdenaMeta(it.unitValue).parsed < 0);
+    if (invalidItem) {
+      alert("Corrija os valores de Adena inválidos antes de salvar.");
+      return;
+    }
+
     const payload = {
       title,
       type,
@@ -251,6 +279,18 @@ export function DropFormPage() {
             </Button>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-sm text-orange-800">
+              <p className="font-semibold mb-1">Como informar o valor da Adena:</p>
+              <p className="mb-1">Digite o valor exato (ex: <strong>500</strong> = 500 adenas) ou use abreviações:</p>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <span><strong>k</strong> = mil (1.000)</span>
+                <span><strong>kk</strong> = milhão (1.000.000)</span>
+                <span><strong>b</strong> = bilhão (1.000.000.000)</span>
+              </div>
+              <p className="mt-1 text-xs text-orange-700">
+                Exemplos: <strong>500</strong> (500), <strong>500k</strong> (500.000), <strong>2.5kk</strong> (2.500.000), <strong>1b</strong> (1.000.000.000)
+              </p>
+            </div>
             {formItems.map((item, idx) => (
               <div
                 key={idx}
@@ -271,7 +311,7 @@ export function DropFormPage() {
                   <div className="md:col-span-5 space-y-1">
                     <Label className="text-xs">Nome do item (se não cadastrado)</Label>
                     <Input
-                      placeholder="Ex: Adena"
+                      placeholder="Coloque o nome de algum item no Lineage 2"
                       value={item.itemName || ""}
                       onChange={(e) => updateItem(idx, "itemName", e.target.value)}
                     />
@@ -291,11 +331,29 @@ export function DropFormPage() {
                 <div className="md:col-span-3 space-y-1">
                   <Label className="text-xs">Valor Unitário *</Label>
                   <Input
-                    placeholder="500k, 1kk"
+                    placeholder="Digite o valor do drop"
                     value={item.unitValue}
                     onChange={(e) => updateItem(idx, "unitValue", e.target.value)}
                     required
                   />
+                  {(() => {
+                    const { preview, error } = getAdenaMeta(item.unitValue);
+                    return (
+                      <>
+                        {preview && (
+                          <p className="text-xs text-emerald-600 mt-1">{preview}</p>
+                        )}
+                        {error && (
+                          <p className="text-xs text-destructive mt-1">{error}</p>
+                        )}
+                        {!preview && !error && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            k = mil | kk = milhão | b = bilhão
+                          </p>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
 
                 <div className="md:col-span-1 flex items-end justify-end">

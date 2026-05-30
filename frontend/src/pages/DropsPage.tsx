@@ -47,11 +47,8 @@ export function DropsPage() {
     },
   });
 
-  const formatAdena = (v: number) => {
-    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}kk`;
-    if (v >= 1_000) return `${(v / 1_000).toFixed(0)}k`;
-    return String(v);
-  };
+  import { formatAdenaPreview } from "@/lib/adena";
+  const formatAdena = formatAdenaPreview;
 
   const clearFilters = () => {
     setFilterTitle("");

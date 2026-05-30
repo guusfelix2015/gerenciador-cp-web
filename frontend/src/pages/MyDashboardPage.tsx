@@ -8,11 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { BarChartComponent } from "@/components/ui/bar-chart";
 import { Loader2, TrendingUp, Wallet, Clock, Boxes, BarChart3, Crown, CheckCircle, XCircle } from "lucide-react";
 
-function formatAdena(value: number) {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}kk`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(0)}k`;
-  return String(value);
-}
+import { formatAdenaPreview } from "@/lib/adena";
 
 interface MyDrop {
   id: string;
@@ -71,7 +67,7 @@ export function MyDashboardPage() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{formatAdena(stats?.totalEarned ?? 0)}</div>
+            <div className="text-2xl font-bold text-primary">{formatAdenaPreview(stats?.totalEarned ?? 0)}</div>
           </CardContent>
         </Card>
 
@@ -91,7 +87,7 @@ export function MyDashboardPage() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">{formatAdena(stats?.totalPending ?? 0)}</div>
+            <div className="text-2xl font-bold text-destructive">{formatAdenaPreview(stats?.totalPending ?? 0)}</div>
           </CardContent>
         </Card>
 
@@ -101,7 +97,7 @@ export function MyDashboardPage() {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{formatAdena(stats?.totalPaid ?? 0)}</div>
+            <div className="text-2xl font-bold text-green-600">{formatAdenaPreview(stats?.totalPaid ?? 0)}</div>
           </CardContent>
         </Card>
       </div>
@@ -141,14 +137,14 @@ export function MyDashboardPage() {
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <span className="font-medium">Pagos</span>
               </div>
-              <span className="font-bold text-green-700">{formatAdena(stats?.totalPaid ?? 0)}</span>
+              <span className="font-bold text-green-700">{formatAdenaPreview(stats?.totalPaid ?? 0)}</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-red-50 border border-red-200">
               <div className="flex items-center gap-2">
                 <XCircle className="h-5 w-5 text-red-600" />
                 <span className="font-medium">Pendentes</span>
               </div>
-              <span className="font-bold text-red-700">{formatAdena(stats?.totalPending ?? 0)}</span>
+              <span className="font-bold text-red-700">{formatAdenaPreview(stats?.totalPending ?? 0)}</span>
             </div>
           </CardContent>
         </Card>
@@ -188,8 +184,8 @@ export function MyDashboardPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>{new Date(drop.dropDate).toLocaleDateString("pt-BR")}</TableCell>
-                    <TableCell>{formatAdena(drop.totalValue)}</TableCell>
-                    <TableCell className="font-medium">{formatAdena(drop.splitValue)}</TableCell>
+                    <TableCell>{formatAdenaPreview(drop.totalValue)}</TableCell>
+                    <TableCell className="font-medium">{formatAdenaPreview(drop.splitValue)}</TableCell>
                     <TableCell>
                       {drop.myStatus === "PAID" ? (
                         <Badge variant="default" className="gap-1">

@@ -8,11 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Wallet, Users, CheckCircle, ArrowRight } from "lucide-react";
 
-function formatAdena(value: number) {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}kk`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(0)}k`;
-  return String(value);
-}
+import { formatAdenaPreview } from "@/lib/adena";
 
 export function PaymentsPage() {
   const queryClient = useQueryClient();
@@ -115,7 +111,7 @@ export function PaymentsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Valor Total</p>
-                <p className="text-2xl font-bold text-primary">{formatAdena(totalSelectedValue)}</p>
+                <p className="text-2xl font-bold text-primary">{formatAdenaPreview(totalSelectedValue)}</p>
               </div>
               <Button
                 onClick={handleBulkPay}
@@ -152,7 +148,7 @@ export function PaymentsPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-bold text-destructive">{formatAdena(member.totalPending)}</p>
+                  <p className="text-xl font-bold text-destructive">{formatAdenaPreview(member.totalPending)}</p>
                   <p className="text-xs text-muted-foreground">Saldo pendente</p>
                 </div>
               </div>
@@ -188,7 +184,7 @@ export function PaymentsPage() {
                           />
                           <span className="truncate">{d.dropTitle}</span>
                         </div>
-                        <Badge variant="outline">{formatAdena(d.splitValue)}</Badge>
+                        <Badge variant="outline">{formatAdenaPreview(d.splitValue)}</Badge>
                       </div>
                     ))}
                   </div>

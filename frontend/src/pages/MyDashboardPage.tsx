@@ -119,7 +119,7 @@ export function MyDashboardPage() {
                 })) ?? []
               }
               color="#10b981"
-              yAxisFormatter={formatAdena}
+              yAxisFormatter={formatAdenaPreview}
             />
           </CardContent>
         </Card>

@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { BarChartComponent } from "@/components/ui/bar-chart";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -237,7 +236,7 @@ export function DashboardPage() {
                 })) ?? []
               }
               color="#10b981"
-              yAxisFormatter={formatAdena}
+              yAxisFormatter={formatAdenaPreview}
             />
           </CardContent>
         </Card>

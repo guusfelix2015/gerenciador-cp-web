@@ -43,3 +43,7 @@ tmp/
 
 # Playwright MCP
 .playwright-mcp/
+
+# Backend is a separate repository (gerenciador-cp-api)
+# Do not track backend files in this frontend repository
+/backend/

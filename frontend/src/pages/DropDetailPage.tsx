@@ -201,8 +201,9 @@ export function DropDetailPage() {
             {drop.participants.map((p) => (
               <div
                 key={p.id}
-                className={`flex items-center gap-3 p-3 rounded-lg border ${p.paymentStatus === "PAID" ? "bg-green-50 border-green-200" : "bg-muted/30"
-                  }`}
+                className={`flex items-center gap-3 p-3 rounded-lg border ${
+                  p.paymentStatus === "PAID" ? "bg-green-50 border-green-200" : "bg-muted/30"
+                }`}
               >
                 <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
                   {p.user.name.charAt(0).toUpperCase()}

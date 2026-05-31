@@ -280,16 +280,28 @@ export function DropFormPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-sm text-orange-800">
-              <p className="font-semibold mb-1">Como informar o valor da Adena:</p>
-              <p className="mb-1">Digite o valor exato (ex: <strong>500</strong> = 500 adenas) ou use abreviações:</p>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <span><strong>k</strong> = mil (1.000)</span>
-                <span><strong>kk</strong> = milhão (1.000.000)</span>
-                <span><strong>b</strong> = bilhão (1.000.000.000)</span>
+              <p className="font-semibold mb-2">Como informar o valor da Adena:</p>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mb-2">
+                <span className="font-semibold">Valor</span>
+                <span className="font-semibold">Nome</span>
+                <span>1000</span>
+                <span>Thousand</span>
+                <span>1000000</span>
+                <span>Million</span>
+                <span>1000000000</span>
+                <span>Billion</span>
+                <span>1000000000000</span>
+                <span>Trillion</span>
               </div>
-              <p className="mt-1 text-xs text-orange-700">
-                Exemplos: <strong>500</strong> (500), <strong>500k</strong> (500.000), <strong>2.5kk</strong> (2.500.000), <strong>1b</strong> (1.000.000.000)
-              </p>
+              <p className="text-xs text-orange-700 mb-1 font-semibold">Exemplos:</p>
+              <ul className="list-disc list-inside text-xs text-orange-700 space-y-0.5">
+                <li>1000 = 1 Thousand</li>
+                <li>100000 = 100 Thousand</li>
+                <li>1000000 = 1 Million</li>
+                <li>5000000 = 5 Million</li>
+                <li>1000000000 = 1 Billion</li>
+                <li>2500000000 = 2.5 Billion</li>
+              </ul>
             </div>
             {formItems.map((item, idx) => (
               <div

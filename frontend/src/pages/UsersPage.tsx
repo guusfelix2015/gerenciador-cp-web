@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Plus, Pencil, Trash2, Users as UsersIcon } from "lucide-react";
+import { toast } from "sonner";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -63,9 +65,13 @@ export function UsersPage() {
   const createMutation = useMutation({
     mutationFn: (data: UserForm) => api.post("/users", data),
     onSuccess: () => {
+      toast.success("Usuário criado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setDialogOpen(false);
       reset();
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao criar usuário");
     },
   });
 
@@ -73,16 +79,26 @@ export function UsersPage() {
     mutationFn: ({ id, data }: { id: string; data: UpdateForm }) =>
       api.patch(`/users/${id}`, data),
     onSuccess: () => {
+      toast.success("Usuário atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setDialogOpen(false);
       setEditing(null);
       reset();
     },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao atualizar usuário");
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/users/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
+    onSuccess: () => {
+      toast.success("Usuário excluído com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao excluir usuário");
+    },
   });
 
   const {
@@ -145,6 +161,8 @@ export function UsersPage() {
             <div className="flex justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
+          ) : !users?.length ? (
+            <EmptyState />
           ) : (
             <Table>
               <TableHeader>
@@ -156,7 +174,7 @@ export function UsersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users?.map((u) => (
+                {users.map((u) => (
                   <TableRow key={u.id}>
                     <TableCell className="font-medium">{u.name}</TableCell>
                     <TableCell>{u.email}</TableCell>

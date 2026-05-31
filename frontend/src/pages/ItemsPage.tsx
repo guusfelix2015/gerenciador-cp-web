@@ -12,6 +12,8 @@ import { Dialog, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Plus, Pencil, Trash2, Package, Search } from "lucide-react";
+import { toast } from "sonner";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -51,9 +53,13 @@ export function ItemsPage() {
   const createMutation = useMutation({
     mutationFn: (data: ItemForm) => api.post("/items", data),
     onSuccess: () => {
+      toast.success("Item criado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
       setDialogOpen(false);
       reset();
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao criar item");
     },
   });
 
@@ -61,16 +67,26 @@ export function ItemsPage() {
     mutationFn: ({ id, data }: { id: string; data: ItemForm }) =>
       api.patch(`/items/${id}`, data),
     onSuccess: () => {
+      toast.success("Item atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
       setDialogOpen(false);
       setEditing(null);
       reset();
     },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao atualizar item");
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/items/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items"] }),
+    onSuccess: () => {
+      toast.success("Item excluído com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao excluir item");
+    },
   });
 
   const {
@@ -178,6 +194,8 @@ export function ItemsPage() {
             <div className="flex justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
+          ) : !items?.length ? (
+            <EmptyState />
           ) : (
             <Table>
               <TableHeader>
@@ -188,7 +206,7 @@ export function ItemsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {items?.map((item) => (
+                {items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>
@@ -216,13 +234,6 @@ export function ItemsPage() {
                     )}
                   </TableRow>
                 ))}
-                {items?.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={isAdmin ? 3 : 2} className="text-center text-muted-foreground py-8">
-                      Nenhum item encontrado
-                    </TableCell>
-                  </TableRow>
-                )}
               </TableBody>
             </Table>
           )}

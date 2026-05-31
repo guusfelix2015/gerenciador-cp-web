@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2, ScrollText, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString("pt-BR", {
@@ -102,6 +103,8 @@ export function AuditLogsPage() {
             <div className="flex justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
+          ) : !paginated?.data.length ? (
+            <EmptyState />
           ) : (
             <>
               <Table>
@@ -116,7 +119,7 @@ export function AuditLogsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginated?.data.map((log) => (
+                  {paginated.data.map((log) => (
                     <>
                       <TableRow key={log.id}>
                         <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
@@ -156,17 +159,10 @@ export function AuditLogsPage() {
                       )}
                     </>
                   ))}
-                  {paginated?.data.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                        Nenhum log encontrado
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
 
-              {paginated && paginated.total > 0 && (
+              {paginated.total > 0 && (
                 <div className="flex items-center justify-between mt-4 pt-4 border-t">
                   <p className="text-sm text-muted-foreground">
                     Mostrando {paginated.data.length} de {paginated.total} logs

@@ -11,6 +11,7 @@ import { Select } from "@/components/ui/select";
 import { Combobox } from "@/components/ui/combobox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 const dropTypes = ["FARM", "BOSS", "PRIME"] as const;
 
@@ -126,19 +127,27 @@ export function DropFormPage() {
   const createMutation = useMutation({
     mutationFn: (payload: any) => api.post("/drops", payload),
     onSuccess: () => {
+      toast.success("Drop criado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["drops"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       navigate("/drops");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao criar drop");
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: (payload: any) => api.patch(`/drops/${id}`, payload),
     onSuccess: () => {
+      toast.success("Drop atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["drops"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       queryClient.invalidateQueries({ queryKey: ["drop", id] });
       navigate(`/drops/${id}`);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao atualizar drop");
     },
   });
 

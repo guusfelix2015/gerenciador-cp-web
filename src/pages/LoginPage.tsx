@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Shield, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { DonationModal } from "@/components/donation/DonationModal";
 
 const schema = z.object({
@@ -36,6 +37,7 @@ export function LoginPage() {
       setShowDonation(true);
     } catch {
       setError("Credenciais inválidas");
+      toast.error("Credenciais inválidas");
     }
   };
 

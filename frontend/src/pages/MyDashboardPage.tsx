@@ -9,6 +9,7 @@ import { BarChartComponent } from "@/components/ui/bar-chart";
 import { Loader2, TrendingUp, Wallet, Clock, Boxes, BarChart3, Crown, CheckCircle, XCircle } from "lucide-react";
 
 import { formatAdenaPreview } from "@/lib/adena";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface MyDrop {
   id: string;
@@ -158,20 +159,22 @@ export function MyDashboardPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Título</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead>Valor Total</TableHead>
-                <TableHead>Meu Split</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data?.drops.length ? (
-                data.drops.map((drop) => (
+          {!data?.drops.length ? (
+            <EmptyState />
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Título</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Valor Total</TableHead>
+                  <TableHead>Meu Split</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.drops.map((drop) => (
                   <TableRow
                     key={drop.id}
                     className="cursor-pointer hover:bg-muted/80"
@@ -198,16 +201,10 @@ export function MyDashboardPage() {
                       )}
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                    Você ainda não participou de nenhum drop.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>

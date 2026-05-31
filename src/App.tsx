@@ -14,6 +14,7 @@ import { DropDetailPage } from "@/pages/DropDetailPage";
 import { DonationPage } from "@/pages/DonationPage";
 import { PaymentsPage } from "@/pages/PaymentsPage";
 import { AuditLogsPage } from "@/pages/AuditLogsPage";
+import { Toaster } from "@/components/ui/sonner";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -78,6 +79,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AppRoutes />
+      <Toaster position="top-right" richColors />
     </BrowserRouter>
   );
 }

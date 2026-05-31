@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Wallet, Users, CheckCircle, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
+import { EmptyState } from "@/components/ui/empty-state";
 
 import { formatAdenaPreview } from "@/lib/adena";
 
@@ -29,9 +31,13 @@ export function PaymentsPage() {
       return data;
     },
     onSuccess: () => {
+      toast.success("Pagamentos registrados com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["payments", "balance"] });
       queryClient.invalidateQueries({ queryKey: ["drops"] });
       setSelectedItems({});
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao registrar pagamentos");
     },
   });
 
@@ -194,12 +200,8 @@ export function PaymentsPage() {
           </Card>
         ))}
 
-        {balances?.length === 0 && (
-          <div className="text-center text-muted-foreground py-12">
-            <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p className="text-lg font-medium">Nenhum saldo pendente</p>
-            <p className="text-sm">Todos os participantes estão pagos.</p>
-          </div>
+        {!balances?.length && (
+          <EmptyState title="Nenhum saldo pendente" description="Todos os participantes estão pagos." />
         )}
       </div>
     </div>

@@ -13,6 +13,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { formatAdenaPreview } from "@/lib/adena";
 import { Loader2, Plus, Trash2, Boxes, Search, ChevronLeft, ChevronRight, Pencil, FileDown } from "lucide-react";
+import { toast } from "sonner";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export function DropsPage() {
   const navigate = useNavigate();
@@ -43,8 +45,12 @@ export function DropsPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/drops/${id}`),
     onSuccess: () => {
+      toast.success("Drop excluído com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["drops"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao excluir drop");
     },
   });
 
@@ -162,6 +168,8 @@ export function DropsPage() {
             <div className="flex justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
+          ) : !paginated?.data.length ? (
+            <EmptyState />
           ) : (
             <>
               <Table>

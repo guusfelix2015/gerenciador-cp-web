@@ -13,6 +13,7 @@ import { Select } from "@/components/ui/select";
 import { Loader2, TrendingUp, Boxes, CalendarDays, Package, Crown, BarChart3, FileDown } from "lucide-react";
 
 import { formatAdenaPreview } from "@/lib/adena";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export function DashboardPage() {
   const [startDate, setStartDate] = useState("");
@@ -62,6 +63,14 @@ export function DashboardPage() {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <EmptyState title="Nenhum dado disponível" description="Ainda não há dados de dashboard para exibir." />
       </div>
     );
   }

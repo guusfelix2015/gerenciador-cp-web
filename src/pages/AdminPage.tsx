@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Crown, Users, Package, Boxes, Power, PowerOff } from "lucide-react";
+import { toast } from "sonner";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface WorkspaceWithUsers {
   id: string;
@@ -36,7 +38,11 @@ export function AdminPage() {
   const toggleMutation = useMutation({
     mutationFn: (id: string) => api.patch(`/admin/workspaces/${id}/toggle`),
     onSuccess: () => {
+      toast.success("Status da CP atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["admin", "workspaces"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao atualizar status da CP");
     },
   });
 
@@ -158,10 +164,8 @@ export function AdminPage() {
         ))}
       </div>
 
-      {workspaces?.length === 0 && (
-        <div className="text-center text-muted-foreground py-12">
-          Nenhuma CP cadastrada no sistema.
-        </div>
+      {!workspaces?.length && (
+        <EmptyState title="Nenhuma CP cadastrada" description="Ainda não há workspaces no sistema." />
       )}
     </div>
   );

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Shield, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { DonationModal } from "@/components/donation/DonationModal";
 
 const schema = z.object({
@@ -35,9 +36,12 @@ export function RegisterPage() {
     try {
       setError("");
       await registerCp(data);
+      toast.success("CP criada com sucesso!");
       setShowDonation(true);
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Erro ao cadastrar CP");
+      const msg = err?.response?.data?.message || "Erro ao cadastrar CP";
+      setError(msg);
+      toast.error(msg);
     }
   };
 

@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, ArrowLeft, Boxes, Users, Calendar, FileText, Crown, Coins, CheckCircle, XCircle, Wallet } from "lucide-react";
+import { toast } from "sonner";
 
 import { formatAdenaPreview } from "@/lib/adena";
 
@@ -31,18 +32,36 @@ export function DropDetailPage() {
   const payMutation = useMutation({
     mutationFn: (participantId: string) =>
       api.post(`/drops/${id}/participants/${participantId}/pay`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["drop", id] }),
+    onSuccess: () => {
+      toast.success("Pagamento registrado!");
+      queryClient.invalidateQueries({ queryKey: ["drop", id] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao registrar pagamento");
+    },
   });
 
   const unpayMutation = useMutation({
     mutationFn: (participantId: string) =>
       api.post(`/drops/${id}/participants/${participantId}/unpay`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["drop", id] }),
+    onSuccess: () => {
+      toast.success("Pagamento desfeito!");
+      queryClient.invalidateQueries({ queryKey: ["drop", id] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao desfazer pagamento");
+    },
   });
 
   const payAllMutation = useMutation({
     mutationFn: () => api.post(`/drops/${id}/pay-all`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["drop", id] }),
+    onSuccess: () => {
+      toast.success("Todos os pagamentos foram registrados!");
+      queryClient.invalidateQueries({ queryKey: ["drop", id] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erro ao registrar pagamentos");
+    },
   });
 
   if (isLoading) {

@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Combobox } from "@/components/ui/combobox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const dropTypes = ["FARM", "BOSS", "PRIME"] as const;
 
@@ -62,6 +64,9 @@ export function DropFormPage() {
   const [formParticipants, setFormParticipants] = useState<DropFormParticipant[]>([
     { userId: "" },
   ]);
+  const [selectAllMembers, setSelectAllMembers] = useState(false);
+
+  const hasSelectedIndividual = formParticipants.some((p) => p.userId !== "");
 
   const { data: itemsList } = useQuery<Item[]>({
     queryKey: ["items"],
@@ -109,6 +114,16 @@ export function DropFormPage() {
       );
     }
   }, [existingDrop]);
+
+  useEffect(() => {
+    if (isEditMode && existingDrop && usersList) {
+      const participantIds = new Set(
+        existingDrop.participants.map((p) => p.userId)
+      );
+      const hasAll = usersList.every((u) => participantIds.has(u.id));
+      setSelectAllMembers(hasAll);
+    }
+  }, [isEditMode, existingDrop, usersList]);
 
   const itemOptions =
     itemsList?.map((it) => ({
@@ -183,6 +198,11 @@ export function DropFormPage() {
       return;
     }
 
+    if (dropDate && new Date(dropDate) > new Date()) {
+      alert("Não é permitido criar um drop com data futura.");
+      return;
+    }
+
     const payload = {
       title,
       type,
@@ -194,7 +214,9 @@ export function DropFormPage() {
         quantity: it.quantity,
         unitValue: it.unitValue,
       })),
-      participants: formParticipants.filter((p) => p.userId),
+      participants: selectAllMembers
+        ? (usersList ?? []).map((u) => ({ userId: u.id }))
+        : formParticipants.filter((p) => p.userId),
     };
 
     if (isEditMode) {
@@ -264,6 +286,7 @@ export function DropFormPage() {
                   type="date"
                   value={dropDate}
                   onChange={(e) => setDropDate(e.target.value)}
+                  max={new Date().toISOString().split("T")[0]}
                   required
                 />
               </div>
@@ -396,39 +419,87 @@ export function DropFormPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Participantes</CardTitle>
-            <Button type="button" variant="outline" size="sm" onClick={addParticipant}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addParticipant}
+              disabled={selectAllMembers}
+            >
               <Plus className="h-4 w-4 mr-1" /> Adicionar Participante
             </Button>
           </CardHeader>
           <CardContent className="space-y-4">
-            {formParticipants.map((p, idx) => (
-              <div
-                key={idx}
-                className="flex flex-wrap gap-3 items-start p-4 rounded-lg border bg-muted/30"
-              >
-                <div className="flex-1 min-w-[200px] space-y-1">
-                  <Label className="text-xs">Membro *</Label>
-                  <Combobox
-                    placeholder="Buscar membro..."
-                    searchPlaceholder="Digite para buscar..."
-                    options={userOptions}
-                    value={p.userId}
-                    onChange={(value) => updateParticipant(idx, value)}
-                  />
-                </div>
-                <div className="flex items-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeParticipant(idx)}
-                    disabled={formParticipants.length <= 1}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+            <label
+              className={cn(
+                "flex items-center gap-2 cursor-pointer",
+                hasSelectedIndividual && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              <Checkbox
+                checked={selectAllMembers}
+                onCheckedChange={(checked) => {
+                  setSelectAllMembers(checked);
+                  if (checked) {
+                    setFormParticipants([{ userId: "" }]);
+                  }
+                }}
+                disabled={hasSelectedIndividual}
+              />
+              <span className="text-sm">Incluir todos os membros da CP</span>
+            </label>
+            {hasSelectedIndividual && !selectAllMembers && (
+              <p className="text-xs text-muted-foreground">
+                Remova as seleções manuais para usar a opção de incluir todos.
+              </p>
+            )}
+
+            {selectAllMembers ? (
+              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                <p className="text-sm text-emerald-700 font-medium mb-2">
+                  Todos os membros da CP foram selecionados ({usersList?.length ?? 0}):
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {(usersList ?? []).map((u) => (
+                    <span
+                      key={u.id}
+                      className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700"
+                    >
+                      {u.name}
+                    </span>
+                  ))}
                 </div>
               </div>
-            ))}
+            ) : (
+              formParticipants.map((p, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-wrap gap-3 items-start p-4 rounded-lg border bg-muted/30"
+                >
+                  <div className="flex-1 min-w-[200px] space-y-1">
+                    <Label className="text-xs">Membro *</Label>
+                    <Combobox
+                      placeholder="Buscar membro..."
+                      searchPlaceholder="Digite para buscar..."
+                      options={userOptions}
+                      value={p.userId}
+                      onChange={(value) => updateParticipant(idx, value)}
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeParticipant(idx)}
+                      disabled={formParticipants.length <= 1}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
 

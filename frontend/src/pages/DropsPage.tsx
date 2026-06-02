@@ -121,7 +121,7 @@ export function DropsPage() {
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-wrap gap-3 items-end">
-            <div className="space-y-1 flex-1 min-w-[200px]">
+            <div className="space-y-1 w-full sm:w-[260px]">
               <Label className="text-xs">Título</Label>
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
